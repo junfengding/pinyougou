@@ -252,8 +252,8 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.2</version>
 					<configuration>
-						<source>1.7</source>
-						<target>1.7</target>
+						<source>1.8</source>
+						<target>1.8</target>
 						<encoding>UTF-8</encoding>
 						<showWarnings>true</showWarnings>
 					</configuration>
@@ -262,4 +262,7 @@
 		</pluginManagement>
 	</build>
   
+	<modules>
+		<module>bos_domain</module>
+	</modules>
 </project>
