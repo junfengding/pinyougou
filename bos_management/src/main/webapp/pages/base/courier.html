@@ -16,8 +16,26 @@
 		<script type="text/javascript" src="../../js/easyui/ext/jquery.cookie.js"></script>
 		<script src="../../js/easyui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
 		<script type="text/javascript">
+		$.fn.serializeJson=function(){  
+            var serializeObj={};  
+            var array=this.serializeArray();  
+            var str=this.serialize();  
+            $(array).each(function(){  
+                if(serializeObj[this.name]){  
+                    if($.isArray(serializeObj[this.name])){  
+                        serializeObj[this.name].push(this.value);  
+                    }else{  
+                        serializeObj[this.name]=[serializeObj[this.name],this.value];  
+                    }  
+                }else{  
+                    serializeObj[this.name]=this.value;   
+                }  
+            });  
+            return serializeObj;  
+        }; 
+		
 			function doAdd(){
-				$('#addWindow').window("open");
+				$('#courierWindow').window("open");
 			}
 			
 			function doEdit(){
@@ -31,12 +49,16 @@
 			function doRestore(){
 				alert("将取派员还原...");
 			}
+			
+			$(function(){	
+			
 			//工具栏
 			var toolbar = [ {
 				id : 'button-add',	
 				text : '增加',
 				iconCls : 'icon-add',
 				handler : doAdd
+		
 			}, {
 				id : 'button-edit',
 				text : '修改',
@@ -52,6 +74,14 @@
 				text : '还原',
 				iconCls : 'icon-save',
 				handler : doRestore
+			},{
+				id : 'button-search',
+				text : '查询',
+				iconCls : 'icon-search',
+				handler : function(){
+					$("#searchWindow").window('open');
+					
+				}
 			}];
 			// 定义列
 			var columns = [ [ {
@@ -127,9 +157,24 @@
 				align : 'center'
 			} ] ];
 			
-			$(function(){
 				// 先将body隐藏，再显示，不会出现页面刷新效果
 				$("body").css({visibility:"visible"});
+				
+				//保存操作前进行表单校验
+				$("#save").click(function(){
+					if($("#courierForm").form('validate')){
+						$("#courierForm").submit();
+					}else{
+						$.messager.alert("警告","表单中还存在需要一些非法内容","warning");		
+					}
+				});
+			//查询按钮事件
+		$("#searchBtn").click(function(){
+			var params=$("#searchForm").serializeJson();
+			$("#grid").datagrid('load',params);
+			$("#searchWindow").window('close');
+			
+		});
 				
 				// 取派员信息表格
 				$('#grid').datagrid( {
@@ -138,17 +183,17 @@
 					border : false,
 					rownumbers : true,
 					striped : true,
-					pageList: [30,50,100],
+					pageList: [10,20,50],
 					pagination : true,
 					toolbar : toolbar,
-					url : "../../data/courier.json",
+					url : "../../courier_pageQuery",
 					idField : 'id',
 					columns : columns,
 					onDblClickRow : doDblClickRow
 				});
 				
 				// 添加取派员窗口
-				$('#addWindow').window({
+				$('#courierWindow').window({
 			        title: '添加取派员',
 			        width: 800,
 			        modal: true,
@@ -170,7 +215,7 @@
 		<div region="center" border="false">
 			<table id="grid"></table>
 		</div>
-		<div class="easyui-window" title="对收派员进行添加或者修改" id="addWindow" collapsible="false" minimizable="false" maximizable="false" style="top:20px;left:200px">
+		<div class="easyui-window" title="对收派员进行添加或者修改" id="courierWindow" collapsible="false" minimizable="false" maximizable="false" style="top:20px;left:200px">
 			<div region="north" style="height:31px;overflow:hidden;" split="false" border="false">
 				<div class="datagrid-toolbar">
 					<a id="save" icon="icon-save" href="#" class="easyui-linkbutton" plain="true">保存</a>
@@ -178,7 +223,7 @@
 			</div>
 
 			<div region="center" style="overflow:auto;padding:5px;" border="false">
-				<form>
+				<form id="courierForm" method="post" action="../../courier_save">
 					<table class="table-edit" width="80%" align="center">
 						<tr class="title">
 							<td colspan="4">收派员信息</td>
@@ -223,7 +268,7 @@
 								<input type="text" name="standard.id" 
 										class="easyui-combobox" 
 										data-options="required:true,valueField:'id',textField:'name',
-											url:'../../standard_findAll.action'"/>
+											url:'../../standard_findAll'"/>
 							</td>
 						</tr>
 						<tr>
@@ -274,7 +319,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td colspan="2"><a id="searchBtn" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a> </td>
+							<td colspan="2"><a id="searchBtn" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a> </td>
 						</tr>
 					</table>
 				</form>

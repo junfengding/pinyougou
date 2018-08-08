@@ -16,111 +16,121 @@
 		<script type="text/javascript" src="../../js/easyui/ext/jquery.cookie.js"></script>
 		<script src="../../js/easyui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
 		<script type="text/javascript">
-			$(function(){
-				// 先将body隐藏，再显示，不会出现页面刷新效果
-				$("body").css({visibility:"visible"});
-				
-				// 收派标准信息表格
-				$('#grid').datagrid( {
-					iconCls : 'icon-forward',
-					fit : true,
-					border : false,
-					rownumbers : true,
-					striped : true,
-					pageList: [30,50,100],
-					pagination : true,
-					toolbar : toolbar,
-					url : "../../data/standard.json",
-					idField : 'id',
-					columns : columns
-				});
-			});	
+		$(function(){
+			// 先将body隐藏，再显示，不会出现页面刷新效果
+			$("body").css({visibility:"visible"});
+			// 收派标准信息表格
+			$('#grid').datagrid( {
+				iconCls : 'icon-forward',
+				fit : true,
+				border : false,
+				rownumbers : true,
+				striped : true,
+				pageList: [10,20,50],
+				pagination : true,
+				toolbar : toolbar,
+				url : "../../standard_pageQuery",
+				idField : 'id',
+				columns : columns
+			});
 			
-			//工具栏
-			var toolbar = [ {
-				id : 'button-add',
-				text : '增加',
-				iconCls : 'icon-add',
-				handler : function(){
-					alert('增加');
+			// 对收派标准 save按钮，添加click事件
+			$("#save").click(function(){
+				// 判断是否form中所有表单对象 都是通过校验 
+				if($("#standardForm").form('validate')){
+					// 通过校验 
+					$("#standardForm").submit();
+				}else{
+					$.messager.alert("警告","表单中还存在需要一些非法内容","warning");						
 				}
-			}, {
-				id : 'button-edit',
-				text : '修改',
-				iconCls : 'icon-edit',
-				handler : function(){
-					alert('修改');
+			});
+		});	
+		
+		//工具栏
+		var toolbar = [ {
+			id : 'button-add',
+			text : '增加',
+			iconCls : 'icon-add',
+			handler : function(){
+				$("#standardForm").form('reset');
+				$("#standardWindow").window('open');
+			}
+		}, {
+			id : 'button-edit',
+			text : '修改',
+			iconCls : 'icon-edit',
+			handler : function(){
+				// 获取当前datagrid选中数据 
+				var rows = $("#grid").datagrid('getSelections');
+				if(rows.length != 1){
+					// 没选 或 多选 
+					$.messager.alert("提示信息","修改数据时，只能选中一行","warning");
+				}else{
+					// 只选中一行 
+					var row = rows[0]; 
+					// 进行表单回显操作 
+					$("#standardForm").form('load',row);
+					// 显示窗口
+					$("#standardWindow").window('open');
 				}
-			},{
-				id : 'button-delete',
-				text : '作废',
-				iconCls : 'icon-cancel',
-				handler : function(){
-					alert('作废');
-				}
-			},{
-				id : 'button-restore',
-				text : '还原',
-				iconCls : 'icon-save',
-				handler : function(){
-					alert('还原');
-				}
-			}];
-			
-			// 定义列
-			var columns = [ [ {
-				field : 'id',
-				checkbox : true
-			},{
-				field : 'name',
-				title : '标准名称',
-				width : 120,
-				align : 'center'
-			}, {
-				field : 'minWeight',
-				title : '最小重量',
-				width : 120,
-				align : 'center'
-			}, {
-				field : 'maxWeight',
-				title : '最大重量',
-				width : 120,
-				align : 'center'
-			}, {
-				field : 'minLength',
-				title : '最小长度',
-				width : 120,
-				align : 'center'
-			}, {
-				field : 'maxLength',
-				title : '最大长度',
-				width : 120,
-				align : 'center'
-			}, {
-				field : 'operator',
-				title : '操作人',
-				width : 120,
-				align : 'center'
-			}, {
-				field : 'operatingTime',
-				title : '操作时间',
-				width : 120,
-				align : 'center'
-			}, {
-				field : 'company',
-				title : '操作单位',
-				width : 120,
-				align : 'center'
-			} ] ];
+			}
+		} ];
+		
+		// 定义列
+		var columns = [ [ {
+			field : 'id',
+			checkbox : true
+		},{
+			field : 'name',
+			title : '标准名称',
+			width : 120,
+			align : 'center'
+		}, {
+			field : 'minWeight',
+			title : '最小重量',
+			width : 120,
+			align : 'center'
+		}, {
+			field : 'maxWeight',
+			title : '最大重量',
+			width : 120,
+			align : 'center'
+		}, {
+			field : 'minLength',
+			title : '最小长度',
+			width : 120,
+			align : 'center'
+		}, {
+			field : 'maxLength',
+			title : '最大长度',
+			width : 120,
+			align : 'center'
+		}, {
+			field : 'operator',
+			title : '操作人',
+			width : 120,
+			align : 'center'
+		}, {
+			field : 'operatingTime',
+			title : '操作时间',
+			width : 120,
+			align : 'center'
+		}, {
+			field : 'company',
+			title : '操作单位',
+			width : 120,
+			align : 'center'
+		} ] ];
 		</script>
 	</head>
 
-	<body class="easyui-layout" style="visibility:hidden;">
+	<body class="easyui-layout" style="visibility:hidden">
 		<div region="center" border="false">
 			<table id="grid"></table>
 		</div>
 		
 		<div class="easyui-window" title="对收派标准进行添加或者修改" id="standardWindow" collapsible="false" minimizable="false" maximizable="false" modal="true" closed="true" style="width:600px;top:50px;left:200px">
+		
 			<div region="north" style="height:31px;overflow:hidden;" split="false" border="false">
 				<div class="datagrid-toolbar">
 					<a id="save" icon="icon-save" href="#" class="easyui-linkbutton" plain="true">保存</a>
@@ -129,7 +139,7 @@
 
 			<div region="center" style="overflow:auto;padding:5px;" border="false">
 				
-				<form>
+				<form id="standardForm" method="post" action="../../standard_save">
 					<table class="table-edit" width="80%" align="center">
 						<tr class="title">
 							<td colspan="2">收派标准信息
