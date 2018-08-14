@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.struts2.json.annotations.JSON;
+
 /**
  * @description:定区
  */
@@ -46,7 +48,9 @@ public class FixedArea {
 	private Set<SubArea> subareas = new HashSet<SubArea>(0);
 
 	@ManyToMany
-	@JoinTable(name = "T_FIXEDAREA_COURIER", joinColumns = { @JoinColumn(name = "C_FIXED_AREA_ID", referencedColumnName = "C_ID") }, inverseJoinColumns = { @JoinColumn(name = "C_COURIER_ID", referencedColumnName = "C_ID") })
+	@JoinTable(name = "T_FIXEDAREA_COURIER", joinColumns = {
+			@JoinColumn(name = "C_FIXED_AREA_ID", referencedColumnName = "C_ID") }, inverseJoinColumns = {
+					@JoinColumn(name = "C_COURIER_ID", referencedColumnName = "C_ID") })
 	private Set<Courier> couriers = new HashSet<Courier>(0);
 
 	public String getId() {
@@ -97,6 +101,7 @@ public class FixedArea {
 		this.operator = operator;
 	}
 
+	@JSON(serialize = false)
 	public Set<SubArea> getSubareas() {
 		return subareas;
 	}
@@ -105,6 +110,7 @@ public class FixedArea {
 		this.subareas = subareas;
 	}
 
+	@JSON(serialize = false)
 	public Set<Courier> getCouriers() {
 		return couriers;
 	}

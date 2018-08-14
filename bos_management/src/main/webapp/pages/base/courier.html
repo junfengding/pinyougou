@@ -39,11 +39,35 @@
 			}
 			
 			function doEdit(){
-				alert("修改...");
+				var rows=$("#grid").datagrid('getSelections');
+				if(rows.length==1){
+					var row=rows[0];
+					$('#courierForm').form('load',row);
+					//$('#standardid').combobox('select',row.standard.name); //下拉列表回显方式一
+					$('#standardid').combobox('setValue',row.standard.name); //下拉列表回显方式二
+					$('#courierWindow').window("open");
+				}else{
+					$.messager.alert("提示信息","修改数据时，只能选中一行","warning");
+				}
+				
 			}
 			
 			function doDelete(){
-				alert("删除...");
+				var rows=$("#grid").datagrid("getSelections");
+				if(rows.length==0){
+					$.messager.alert("提示信息","你还没选中数据","warning");
+				}else{
+					var array=new Array();
+					for(var i=0;i<rows.length;i++){
+						array.push(rows[i].id);
+					}
+					var ids =array.join(",");
+					
+					window.location.href="../../courier_delBatch?ids="+ids;
+				}
+				
+				
+				
 			}
 			
 			function doRestore(){
@@ -139,9 +163,9 @@
 				width : 80,
 				align : 'center',
 				formatter : function(data,row, index){
-					if(data=="0"){
+					if(data==null){
 						return "正常使用"
-					}else{
+					}else if(data==1){
 						return "已作废";
 					}
 				}
@@ -226,7 +250,10 @@
 				<form id="courierForm" method="post" action="../../courier_save">
 					<table class="table-edit" width="80%" align="center">
 						<tr class="title">
-							<td colspan="4">收派员信息</td>
+							<td colspan="4">收派员信息
+							<!--提供隐藏域 装载id -->
+							<input type="hidden" name="id"/>
+							</td>
 						</tr>
 						<tr>
 							<td>快递员工号</td>
@@ -265,7 +292,7 @@
 							</td>
 							<td>取派标准</td>
 							<td>
-								<input type="text" name="standard.id" 
+								<input id="standardid" type="text" name="standard.id" 
 										class="easyui-combobox" 
 										data-options="required:true,valueField:'id',textField:'name',
 											url:'../../standard_findAll'"/>

@@ -56,6 +56,11 @@ public class Courier {
 
 	@ManyToMany(mappedBy = "couriers")
 	private Set<FixedArea> fixedAreas = new HashSet<FixedArea>();
+	
+	
+	public String getInfo(){
+		return name+"("+company+")";
+	}
 
 	public Integer getId() {
 		return id;
