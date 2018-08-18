@@ -16,220 +16,219 @@
 		<script type="text/javascript" src="../../js/easyui/ext/jquery.cookie.js"></script>
 		<script src="../../js/easyui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
 		<script type="text/javascript">
-		$.fn.serializeJson=function(){  
-            var serializeObj={};  
-            var array=this.serializeArray();  
-            var str=this.serialize();  
-            $(array).each(function(){  
-                if(serializeObj[this.name]){  
-                    if($.isArray(serializeObj[this.name])){  
-                        serializeObj[this.name].push(this.value);  
-                    }else{  
-                        serializeObj[this.name]=[serializeObj[this.name],this.value];  
-                    }  
-                }else{  
-                    serializeObj[this.name]=this.value;   
-                }  
-            });  
-            return serializeObj;  
-        }; 
-		
-			function doAdd(){
+			$.fn.serializeJson = function() {
+				var serializeObj = {};
+				var array = this.serializeArray();
+				var str = this.serialize();
+				$(array).each(function() {
+					if(serializeObj[this.name]) {
+						if($.isArray(serializeObj[this.name])) {
+							serializeObj[this.name].push(this.value);
+						} else {
+							serializeObj[this.name] = [serializeObj[this.name], this.value];
+						}
+					} else {
+						serializeObj[this.name] = this.value;
+					}
+				});
+				return serializeObj;
+			};
+
+			function doAdd() {
 				$('#courierWindow').window("open");
 			}
-			
-			function doEdit(){
-				var rows=$("#grid").datagrid('getSelections');
-				if(rows.length==1){
-					var row=rows[0];
-					$('#courierForm').form('load',row);
-					//$('#standardid').combobox('select',row.standard.name); //下拉列表回显方式一
-					$('#standardid').combobox('setValue',row.standard.name); //下拉列表回显方式二
-					$('#courierWindow').window("open");
-				}else{
-					$.messager.alert("提示信息","修改数据时，只能选中一行","warning");
-				}
-				
-			}
-			
-			function doDelete(){
-				var rows=$("#grid").datagrid("getSelections");
-				if(rows.length==0){
-					$.messager.alert("提示信息","你还没选中数据","warning");
-				}else{
-					var array=new Array();
-					for(var i=0;i<rows.length;i++){
+
+			function doDelete() {
+				var rows = $("#grid").datagrid("getSelections");
+				if(rows.length == 0) {
+					$.messager.alert("提示信息", "你还没选中数据", "warning");
+				} else {
+					var array = new Array();
+					for(var i = 0; i < rows.length; i++) {
 						array.push(rows[i].id);
 					}
-					var ids =array.join(",");
-					
-					window.location.href="../../courier_delBatch?ids="+ids;
+					var ids = array.join(",");
+
+					window.location.href = "../../courier_delBatch?ids=" + ids;
 				}
-				
-				
-				
 			}
-			
-			function doRestore(){
+
+			function doRestore() {
 				alert("将取派员还原...");
 			}
-			
-			$(function(){	
-			
-			//工具栏
-			var toolbar = [ {
-				id : 'button-add',	
-				text : '增加',
-				iconCls : 'icon-add',
-				handler : doAdd
-		
-			}, {
-				id : 'button-edit',
-				text : '修改',
-				iconCls : 'icon-edit',
-				handler : doEdit
-			}, {
-				id : 'button-delete',
-				text : '作废',
-				iconCls : 'icon-cancel',
-				handler : doDelete
-			},{
-				id : 'button-restore',
-				text : '还原',
-				iconCls : 'icon-save',
-				handler : doRestore
-			},{
-				id : 'button-search',
-				text : '查询',
-				iconCls : 'icon-search',
-				handler : function(){
-					$("#searchWindow").window('open');
-					
-				}
-			}];
-			// 定义列
-			var columns = [ [ {
-				field : 'id',
-				checkbox : true,
-			},{
-				field : 'courierNum',
-				title : '工号',
-				width : 80,
-				align : 'center'
-			},{
-				field : 'name',
-				title : '姓名',
-				width : 80,
-				align : 'center'
-			}, {
-				field : 'telephone',
-				title : '手机号',
-				width : 120,
-				align : 'center'
-			}, {
-				field : 'checkPwd',
-				title : '查台密码',
-				width : 120,
-				align : 'center'
-			}, {
-				field : 'pda',
-				title : 'PDA号',
-				width : 120,
-				align : 'center'
-			}, {
-				field : 'standard.name',
-				title : '取派标准',
-				width : 120,
-				align : 'center',
-				formatter : function(data,row, index){
-					if(row.standard != null){
-						return row.standard.name;
+
+			$(function() {
+
+				//工具栏
+				var toolbar = [{
+					id: 'button-add',
+					text: '增加',
+					iconCls: 'icon-add',
+					handler: doAdd
+
+				}, {
+					id: 'button-edit',
+					text: '修改',
+					iconCls: 'icon-edit',
+					handler: function doEdit() {
+						var rows = $("#grid").datagrid('getSelections');
+						if(rows.length == 1) {
+							var row = rows[0];
+							$('#courierForm').form('load', row);
+							$('#standardid').combobox('select',row.standard.name); //下拉列表回显方式一
+							//$('#standardid').combobox('setValue', row.standard.name); //下拉列表回显方式二,这种方式修改有问题
+							$('#courierWindow').window("open");
+						} else {
+							$.messager.alert("提示信息", "修改数据时，只能选中一行", "warning");
+						}
+
 					}
-					return "";
-				}
-			}, {
-				field : 'type',
-				title : '取派员类型',
-				width : 120,
-				align : 'center'
-			}, {
-				field : 'company',
-				title : '所属单位',
-				width : 200,
-				align : 'center'
-			}, {
-				field : 'deltag',
-				title : '是否作废',
-				width : 80,
-				align : 'center',
-				formatter : function(data,row, index){
-					if(data==null){
-						return "正常使用"
-					}else if(data==1){
-						return "已作废";
+				}, {
+					id: 'button-delete',
+					text: '作废',
+					iconCls: 'icon-cancel',
+					handler: doDelete
+				}, {
+					id: 'button-restore',
+					text: '还原',
+					iconCls: 'icon-save',
+					handler: doRestore
+				}, {
+					id: 'button-search',
+					text: '查询',
+					iconCls: 'icon-search',
+					handler: function() {
+						$("#searchWindow").window('open');
+
 					}
-				}
-			}, {
-				field : 'vehicleType',
-				title : '车型',
-				width : 100,
-				align : 'center'
-			}, {
-				field : 'vehicleNum',
-				title : '车牌号',
-				width : 120,
-				align : 'center'
-			} ] ];
-			
+				}];
+				// 定义列
+				var columns = [
+					[{
+						field: 'id',
+						checkbox: true,
+					}, {
+						field: 'courierNum',
+						title: '工号',
+						width: 80,
+						align: 'center'
+					}, {
+						field: 'name',
+						title: '姓名',
+						width: 80,
+						align: 'center'
+					}, {
+						field: 'telephone',
+						title: '手机号',
+						width: 120,
+						align: 'center'
+					}, {
+						field: 'checkPwd',
+						title: '查台密码',
+						width: 120,
+						align: 'center'
+					}, {
+						field: 'pda',
+						title: 'PDA号',
+						width: 120,
+						align: 'center'
+					}, {
+						field: 'standard.name',
+						title: '取派标准',
+						width: 120,
+						align: 'center',
+						formatter: function(data, row, index) {
+							if(row.standard != null) {
+								return row.standard.name;
+							}
+							return "";
+						}
+					}, {
+						field: 'type',
+						title: '取派员类型',
+						width: 120,
+						align: 'center'
+					}, {
+						field: 'company',
+						title: '所属单位',
+						width: 200,
+						align: 'center'
+					}, {
+						field: 'deltag',
+						title: '是否作废',
+						width: 80,
+						align: 'center',
+						formatter: function(data, row, index) {
+							if(data == null) {
+								return "正常使用"
+							} else if(data == 1) {
+								return "已作废";
+							}
+						}
+					}, {
+						field: 'vehicleType',
+						title: '车型',
+						width: 100,
+						align: 'center'
+					}, {
+						field: 'vehicleNum',
+						title: '车牌号',
+						width: 120,
+						align: 'center'
+					}]
+				];
+
 				// 先将body隐藏，再显示，不会出现页面刷新效果
-				$("body").css({visibility:"visible"});
-				
+				$("body").css({
+					visibility: "visible"
+				});
+
 				//保存操作前进行表单校验
-				$("#save").click(function(){
-					if($("#courierForm").form('validate')){
+				$("#save").click(function() {
+					if($("#courierForm").form('validate')) {
 						$("#courierForm").submit();
-					}else{
-						$.messager.alert("警告","表单中还存在需要一些非法内容","warning");		
+					} else {
+						$.messager.alert("警告", "表单中还存在需要一些非法内容", "warning");
 					}
 				});
-			//查询按钮事件
-		$("#searchBtn").click(function(){
-			var params=$("#searchForm").serializeJson();
-			$("#grid").datagrid('load',params);
-			$("#searchWindow").window('close');
-			
-		});
-				
-				// 取派员信息表格
-				$('#grid').datagrid( {
-					iconCls : 'icon-forward',
-					fit : true,
-					border : false,
-					rownumbers : true,
-					striped : true,
-					pageList: [10,20,50],
-					pagination : true,
-					toolbar : toolbar,
-					url : "../../courier_pageQuery",
-					idField : 'id',
-					columns : columns,
-					onDblClickRow : doDblClickRow
+				//查询按钮事件
+				$("#searchBtn").click(function() {
+					var params = $("#searchForm").serializeJson();
+					$("#grid").datagrid('load', params);
+					$("#searchWindow").window('close');
+
 				});
-				
+
+				// 取派员信息表格
+				$('#grid').datagrid({
+					iconCls: 'icon-forward',
+					fit: true,
+					border: false,
+					rownumbers: true,
+					striped: true,
+					pageList: [10, 20, 50],
+					pagination: true,
+					toolbar: toolbar,
+					url: "../../courier_pageQuery",
+					idField: 'id',
+					columns: columns,
+					onDblClickRow: doDblClickRow
+				});
+
 				// 添加取派员窗口
 				$('#courierWindow').window({
-			        title: '添加取派员',
-			        width: 800,
-			        modal: true,
-			        shadow: true,
-			        closed: true,
-			        height: 400,
-			        resizable:false
-			    });
-				
+					title: '添加取派员',
+					width: 800,
+					modal: true,
+					shadow: true,
+					closed: true,
+					height: 400,
+					resizable: false
+				});
+
 			});
-		
-			function doDblClickRow(){
+
+			function doDblClickRow() {
 				alert("双击表格数据...");
 			}
 		</script>
@@ -251,8 +250,8 @@
 					<table class="table-edit" width="80%" align="center">
 						<tr class="title">
 							<td colspan="4">收派员信息
-							<!--提供隐藏域 装载id -->
-							<input type="hidden" name="id"/>
+								<!--提供隐藏域 装载id -->
+								<input type="hidden" name="id" />
 							</td>
 						</tr>
 						<tr>
@@ -292,10 +291,8 @@
 							</td>
 							<td>取派标准</td>
 							<td>
-								<input id="standardid" type="text" name="standard.id" 
-										class="easyui-combobox" 
-										data-options="required:true,valueField:'id',textField:'name',
-											url:'../../standard_findAll'"/>
+								<input id="standardid" type="text" name="standard.id" class="easyui-combobox" data-options="required:true,valueField:'id',textField:'name',
+											url:'../../standard_findAll'" />
 							</td>
 						</tr>
 						<tr>
@@ -312,7 +309,7 @@
 				</form>
 			</div>
 		</div>
-		
+
 		<!-- 查询快递员-->
 		<div class="easyui-window" title="查询快递员窗口" closed="true" id="searchWindow" collapsible="false" minimizable="false" maximizable="false" style="width: 400px; top:40px;left:200px">
 			<div style="overflow:auto;padding:5px;" border="false">
@@ -346,7 +343,9 @@
 							</td>
 						</tr>
 						<tr>
-							<td colspan="2"><a id="searchBtn" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a> </td>
+							<td colspan="2">
+								<a id="searchBtn" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a>
+							</td>
 						</tr>
 					</table>
 				</form>

@@ -34,7 +34,7 @@ public class Customer {
 	private Date birthday; // 生日
 	@Column(name = "C_SEX")
 	private Integer sex; // 性别 1男 2女
-	@Column(name = "C_TELEPHONE")
+	@Column(name = "C_TELEPHONE",unique=true)
 	private String telephone; // 手机
 	@Column(name = "C_COMPANY")
 	private String company; // 公司

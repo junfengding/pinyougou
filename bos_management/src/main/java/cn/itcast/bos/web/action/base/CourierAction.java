@@ -41,7 +41,7 @@ public class CourierAction extends BaseAction<Courier> {
 
 	// 保存和修改操作
 	@Action(value = "courier_save", results = {
-			@Result(name = "success", type = "redirect", location = "./pages/base/courier.html") })
+			@Result(name = "success", type = "redirect", location = "./pages/base/courier.html")})
 	public String save() {
 		courierService.save(model);
 		return SUCCESS;
