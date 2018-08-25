@@ -14,18 +14,22 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
 	List<Customer> findByFixedAreaId(String fixedAreaId);
 
-	@Query("update Customer set fixedAreaId = ? where id = ?")
+	@Query("update Customer set fixedAreaId = ? where id =?")
 	@Modifying
 	public void updateFixedAreaId(String fixedAreaId, Integer id);
 
-	@Query("update Customer set fixedAreaId = null where fixedAreaId = ?")
+	@Query("update Customer set fixedAreaId = null where fixedAreaId =?")
 	@Modifying
 	public void clearFixedAreaId(String fixedAreaId);
 
 	public Customer findByTelephone(String telephone);
 
-	@Query("update Customer set type = 1 where telephone = ?")
+	@Query("update Customer set type = 1 where telephone =?")
 	@Modifying
 	public void updateType(String telephone);
 
+	public Customer findByTelephoneAndPassword(String telephone, String password);
+
+	@Query("select fixedAreaId from Customer where address=?")
+	String findFixedAreaIdByAddress(String address);
 }

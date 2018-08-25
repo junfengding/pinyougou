@@ -111,7 +111,7 @@ public class AreaAction extends ActionSupport implements ModelDriven<Area> {
 					buffer.append(str);
 				}
 				area.setShortcode(buffer.toString());
-				String citycode = PinYin4jUtils.hanziToPinyin(city, " ");
+				String citycode = PinYin4jUtils.hanziToPinyin(city, "");
 				area.setCitycode(citycode);
 
 				areas.add(area);

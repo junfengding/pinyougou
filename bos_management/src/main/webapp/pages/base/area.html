@@ -133,7 +133,7 @@
 					pageList: [10, 20, 50],
 					pagination: true,
 					toolbar: toolbar,
-					url: "../../area_pageQuery",
+					url: "../../area_pageQuery.action",
 					idField: 'id',
 					columns: columns,
 					onDblClickRow: doDblClickRow
@@ -152,7 +152,7 @@
 				// 为导入按钮，添加一键上传效果 
 				$("#button-import").upload({
 					// 默认name为file 
-					action: '../../area_batchImport',
+					action: '../../area_batchImport.action',
 					onSelect: function() {
 						// 选中文件后，关闭自动提交 
 						this.autoSubmit = false;

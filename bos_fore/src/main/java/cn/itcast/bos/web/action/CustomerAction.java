@@ -23,6 +23,9 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Controller;
 
+import com.opensymphony.xwork2.ActionContext;
+
+import cn.itcast.bos.constant.Constants;
 import cn.itcast.bos.utils.MailUtils;
 import cn.itcast.crm.domain.Customer;
 
@@ -32,9 +35,29 @@ import cn.itcast.crm.domain.Customer;
 @Scope("prototype")
 public class CustomerAction extends BaseAction<Customer> {
 
+	// 登录方法
+	@Action(value = "customer_login", results = {
+			@Result(name = "success", type = "redirect", location = "index.html#/myhome"),
+			@Result(name = "login", type = "redirect", location = "login.html") })
+	public String login() {
+		String baseAddress = Constants.CRM_MANAGEMENT_URL
+				+ "/crm_management/services/customerService/customer/login?telephone=" + model.getTelephone()
+				+ "&password=" + model.getPassword();
+
+		System.out.println(baseAddress);
+		Customer customer = WebClient.create(baseAddress).accept(MediaType.APPLICATION_JSON).get(Customer.class);
+		if (customer == null) {
+			return LOGIN;
+		} else {
+			// 登录成功将客户保存到session中
+			ServletActionContext.getRequest().getSession().setAttribute("customer", customer);
+			return SUCCESS;
+		}
+	}
+
 	@Autowired
 	@Qualifier("jmsQueueTemplate")
-	private JmsTemplate jmsTemplate;
+	private JmsTemplate jmsQueueTemplate;
 
 	@Action(value = "customer_sendSms")
 	public String sendSms() {
@@ -44,9 +67,9 @@ public class CustomerAction extends BaseAction<Customer> {
 		ServletActionContext.getRequest().getSession().setAttribute(model.getTelephone(), randomCode);
 		System.out.println("手机生成的验证码为:" + randomCode);
 		// 编辑短信内容
-		final String msg = "尊敬的用户你好,本次的验证码为:" + randomCode + ",服务电话8200-8300";
+		final String msg = "【华男文化】" + randomCode + "为您的登录验证码，请于1分钟内填写。如非本人操作，请忽略本短信。";
 		// 生产消息
-		jmsTemplate.send("bos_sms", new MessageCreator() {
+		jmsQueueTemplate.send("bos_sms", new MessageCreator() {
 			@Override
 			public Message createMessage(Session session) throws JMSException {
 				MapMessage mapMessage = session.createMapMessage();
@@ -55,7 +78,6 @@ public class CustomerAction extends BaseAction<Customer> {
 				return mapMessage;
 			}
 		});
-
 		return NONE;
 	}
 

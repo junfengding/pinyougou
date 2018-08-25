@@ -41,19 +41,28 @@ public interface CustomerService {
 	@Path("/customer")
 	@POST
 	@Consumes({ "application/xml", "application/json" })
+	//客户注册
 	public void regist(Customer customer);
-	
+
 	@Path("/customer/telephone/{telephone}")
 	@GET
 	@Consumes({ "application/xml", "application/json" })
+	//根据电话查询客户
 	public Customer findByTelephone(@PathParam("telephone") String telephone);
-	
+
 	@Path("/customer/updateType/{telephone}")
 	@GET
 	@Consumes({ "application/xml", "application/json" })
+	//更改客户类型
 	public void updateType(@PathParam("telephone") String telephone);
-	
-	
-	
 
+	@Path("/customer/login")
+	@GET
+	@Consumes({ "application/xml", "application/json" })
+	//客户登录
+	public Customer login(@QueryParam("telephone") String telephone, @QueryParam("password") String password);
+	@Path("/customer/findFixedAreaIdByAddress")
+	@GET
+	@Consumes({ "application/xml", "application/json" })
+	public String findFixedAreaIdByAddress(@QueryParam("address") String address);
 }
